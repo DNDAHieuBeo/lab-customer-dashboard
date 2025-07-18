@@ -24,7 +24,10 @@ async function importCustomers() {
   for (const customer of customers) {
     try {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-      await axios.post('http://localhost:3002/customers', customer);
+      await axios.post(
+        'http://lab-customer-dashboard-production.up.railway.app/customers',
+        customer,
+      );
       console.log(`✅ Imported: ${customer.id}`);
     } catch (error: any) {
       console.error(`❌ Failed: ${customer.id}`);
