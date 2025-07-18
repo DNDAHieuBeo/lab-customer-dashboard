@@ -13,9 +13,9 @@ export class CustomersService {
   ) {}
 
   /** ➕ Tạo mới customer */
-  create(createCustomerDto: CreateCustomerDto): Promise<Customer> {
+  async create(createCustomerDto: CreateCustomerDto): Promise<Customer> {
     const newCustomer = this.customerRepository.create(createCustomerDto);
-    return this.customerRepository.save(newCustomer);
+    return await this.customerRepository.save(newCustomer);
   }
 
   /** 📥 Lấy toàn bộ */

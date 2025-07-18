@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CustomersModule } from './customers/customers.module';
+import { Admin } from './admin/entities/admin.entity';
 
 @Module({
   imports: [
@@ -12,8 +13,9 @@ import { CustomersModule } from './customers/customers.module';
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
       synchronize: true,
+      ssl: false,
+      entities: [Admin],
       autoLoadEntities: true,
-      ssl: true,
     }),
     CustomersModule,
   ],
