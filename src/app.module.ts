@@ -7,13 +7,11 @@ import { Admin } from './admin/entities/admin.entity';
   imports: [
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: process.env.DB_HOST,
-      port: Number(process.env.DB_PORT),
-      username: process.env.DB_USERNAME,
-      password: process.env.DB_PASSWORD,
-      database: process.env.DB_DATABASE,
+      url: process.env.DATABASE_URL, // 👈 dùng URL thay vì từng biến
       synchronize: true,
-      ssl: false,
+      ssl: {
+        rejectUnauthorized: false, // 👈 bắt buộc với Neon / Railway
+      },
       entities: [Admin],
       autoLoadEntities: true,
     }),
