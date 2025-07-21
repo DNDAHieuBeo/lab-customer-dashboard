@@ -13,7 +13,7 @@ export class JwtAuthGuard implements CanActivate {
     const token = req.headers.authorization?.replace('Bearer ', '');
     if (!token) return false;
     try {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-argument
       const decoded = this.jwt.verify(token);
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
       req.user = decoded;
