@@ -16,9 +16,19 @@ export class AuthController {
 
   @Post('login')
   async login(@Body() body: { email: string; password: string }) {
-    const token = await this.authService.validate(body.email, body.password);
-    if (!token) throw new UnauthorizedException('Invalid credentials');
-    return { access_token: token };
+    console.log('[DEBUG] Login payload:', body);
+    try {
+      const token = await this.authService.validate(body.email, body.password);
+      if (!token) {
+        console.log('[DEBUG] Invalid credentials');
+        throw new UnauthorizedException('Invalid credentials');
+      }
+      console.log('[DEBUG] Token generated:', token);
+      return { access_token: token };
+    } catch (err) {
+      console.error('[DEBUG] /auth/login error:', err);
+      throw err; // hoặc dùng HttpException
+    }
   }
 
   // 👇 test route protected
