@@ -10,7 +10,7 @@ import { Admin } from '../admin/entities/admin.entity';
   imports: [
     TypeOrmModule.forFeature([Admin]),
     JwtModule.register({
-      secret: process.env.JWT_SECRET,
+      secret: process.env.JWT_SECRET || 'default_secret',
       signOptions: { expiresIn: '1h' },
     }),
   ],
