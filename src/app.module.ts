@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CustomersModule } from './customers/customers.module';
 import { Admin } from './admin/entities/admin.entity';
-
+import { AuthModule } from './auth/auth.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -16,6 +16,7 @@ import { Admin } from './admin/entities/admin.entity';
       autoLoadEntities: true,
     }),
     CustomersModule,
+    AuthModule,
   ],
 })
 export class AppModule {}
