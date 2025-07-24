@@ -33,8 +33,8 @@ export class AuthController {
     // Gửi refresh token qua cookie thay vì body
     res.cookie('refresh_token', tokenData.refresh_token, {
       httpOnly: true, // Không cho JavaScript truy cập
-      secure: true, // Chỉ gửi qua HTTPS
-      sameSite: 'strict', // Không gửi nếu từ site khác
+      secure: false, // Chỉ gửi qua HTTPS
+      sameSite: 'lax', // Không gửi nếu từ site khác
       path: '/auth/refresh', // Chỉ gửi cookie khi gọi /auth/refresh
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 ngày
     });
@@ -49,7 +49,7 @@ export class AuthController {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access
     return req.user;
   }
-  
+
   @Post('refresh')
   async refresh(@Req() req: Request) {
     const refresh_token = (req as any).cookies['refresh_token']; // Tạm thời
