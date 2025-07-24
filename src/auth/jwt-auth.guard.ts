@@ -1,25 +1,33 @@
 // src/auth/jwt-auth.guard.ts
-import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
+import {
+  Injectable,
+  CanActivate,
+  ExecutionContext,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { Request } from 'express';
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
-  constructor(private jwt: JwtService) {}
+  constructor(private readonly jwtService: JwtService) {}
 
   canActivate(context: ExecutionContext): boolean {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const req = context.switchToHttp().getRequest();
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-    const token = req.headers.authorization?.replace('Bearer ', '');
-    if (!token) return false;
+    const req = context.switchToHttp().getRequest<Request>();
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      throw new UnauthorizedException('Token không tồn tại hoặc không hợp lệ');
+    }
+
+    const token = authHeader.replace('Bearer ', '');
+
     try {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-argument
-      const decoded = this.jwt.verify(token);
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+      const decoded = this.jwtService.verify(token);
       req.user = decoded;
       return true;
-    } catch {
-      return false;
+    } catch (err) {
+      throw new UnauthorizedException('Token không hợp lệ hoặc đã hết hạn');
     }
   }
 }

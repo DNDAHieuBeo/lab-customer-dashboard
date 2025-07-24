@@ -1,13 +1,22 @@
-// src/admin/entities/admin.entity.ts
-import { Entity, PrimaryColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+
 @Entity()
 export class Admin {
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn() // 👈 ID tự động tăng
+  id: number;
+
+  @Column({ unique: true })
   email: string;
+
   @Column()
   password: string;
+
   @Column()
   firstName: string;
+
   @Column()
   lastName: string;
+
+  @Column({ nullable: true })
+  refreshToken: string;
 }
