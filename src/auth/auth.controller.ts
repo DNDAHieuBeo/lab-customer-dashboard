@@ -12,7 +12,8 @@ import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { Response } from 'express';
 import { Res } from '@nestjs/common';
-
+import { RefreshTokenGuard } from './guards/refresh-token.guard';
+import { RequestWithCookies } from 'src/types/request-with-cookie';
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -55,5 +56,14 @@ export class AuthController {
     const refresh_token = (req as any).cookies['refresh_token']; // Tạm thời
     const access_token = await this.authService.refreshToken(refresh_token);
     return { access_token };
+  }
+  // 📁 backend/src/auth/auth.controller.ts
+  @Post('logout')
+  @UseGuards(RefreshTokenGuard)
+  logout(@Req() req: RequestWithCookies, @Res() res: Response) {
+    const refreshToken = req.cookies['refresh_token'];
+    this.authService.invalidateToken(refreshToken);
+    res.clearCookie('refresh_token');
+    return res.status(200).json({ message: 'Logged out successfully' });
   }
 }

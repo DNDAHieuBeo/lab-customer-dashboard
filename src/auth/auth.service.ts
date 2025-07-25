@@ -65,4 +65,26 @@ export class AuthService {
       throw new UnauthorizedException('Refresh token không hợp lệ');
     }
   }
+  // 📌 Xoá refresh token khỏi DB sau khi verify thành công
+  async invalidateToken(refreshToken: string): Promise<void> {
+    try {
+      const payload = this.jwtService.verify(refreshToken, {
+        secret: 'REFRESH_SECRET',
+      });
+
+      const admin = await this.adminRepo.findOneBy({ id: payload.sub });
+      if (!admin || !admin.refreshToken) {
+        throw new UnauthorizedException('Người dùng không tồn tại');
+      }
+
+      const isMatch = await bcrypt.compare(refreshToken, admin.refreshToken);
+      if (!isMatch) {
+        throw new UnauthorizedException('Refresh token không trùng khớp');
+      }
+
+      await this.adminRepo.update(admin.id, { refreshToken: null });
+    } catch {
+      throw new UnauthorizedException('Không thể huỷ refresh token');
+    }
+  }
 }

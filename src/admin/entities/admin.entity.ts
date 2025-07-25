@@ -18,5 +18,5 @@ export class Admin {
   lastName: string;
 
   @Column({ nullable: true })
-  refreshToken: string;
+  refreshToken: string | null;
 }
