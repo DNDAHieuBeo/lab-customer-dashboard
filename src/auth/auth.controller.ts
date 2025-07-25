@@ -36,7 +36,7 @@ export class AuthController {
       httpOnly: true, // Không cho JavaScript truy cập
       secure: false, // Chỉ gửi qua HTTPS
       sameSite: 'lax', // Không gửi nếu từ site khác
-      path: '/auth/refresh', // Chỉ gửi cookie khi gọi /auth/refresh
+ 
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 ngày
     });
 
