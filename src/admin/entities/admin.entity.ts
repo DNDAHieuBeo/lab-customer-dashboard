@@ -1,3 +1,4 @@
+
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
 @Entity()
@@ -17,6 +18,6 @@ export class Admin {
   @Column()
   lastName: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: 'text' })
   refreshToken: string | null;
 }
