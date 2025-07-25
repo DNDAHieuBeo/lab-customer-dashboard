@@ -52,7 +52,7 @@ export class AuthController {
   }
 
   @Post('refresh')
-  async refresh(@Req() req: Request) {
+  async refresh(@Req() req: RequestWithCookies) {
     const refresh_token = (req as any).cookies['refresh_token']; // Tạm thời
     const access_token = await this.authService.refreshToken(refresh_token);
     return { access_token };
