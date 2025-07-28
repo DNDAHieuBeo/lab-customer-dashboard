@@ -61,7 +61,7 @@ export class CustomersService {
     queryBuilder.skip(skip).take(limit);
 
     // Order by created date (newest first)
-    queryBuilder.orderBy('customer.createdAt', 'DESC');
+    queryBuilder.orderBy('customer.registeredDate', 'DESC');
 
     const [data, total] = await queryBuilder.getManyAndCount();
     const totalPages = Math.ceil(total / limit);
