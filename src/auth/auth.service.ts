@@ -23,7 +23,10 @@ export class AuthService {
       return null;
     }
 
-    const access_token = this.jwtService.sign({ sub: admin.id }, { expiresIn: '15m' });
+    const access_token = this.jwtService.sign(
+      { sub: admin.id },
+      { expiresIn: '15m' },
+    );
     const refresh_token = this.jwtService.sign(
       { sub: admin.id },
       { secret: 'REFRESH_SECRET', expiresIn: '7d' },
@@ -78,7 +81,7 @@ export class AuthService {
 
       await this.adminRepo.update(admin.id, { refreshToken: null });
     } catch (err) {
-      console.error('[LOGOUT TOKEN ERROR]', err); // 👈 debug khi cần
+      console.error('[LOGOUT TOKEN ERROR]', err);
       throw new UnauthorizedException('Không thể huỷ token');
     }
   }

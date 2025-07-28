@@ -1,3 +1,5 @@
+
+// customers.controller.ts
 import {
   Controller,
   Get,
@@ -6,10 +8,13 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { CustomersService } from './customers.service';
 import { CreateCustomerDto } from './dto/create-customer.dto';
 import { UpdateCustomerDto } from './dto/update-customer.dto';
+import { SearchCustomerDto, SearchResult, FilterOptions, CustomerStats } from './dto/search-customer.dto';
+import { BulkActionDto } from './dto/bulk-action.dto';
 
 @Controller('customers')
 export class CustomersController {
@@ -23,6 +28,21 @@ export class CustomersController {
   @Get()
   findAll() {
     return this.customersService.findAll();
+  }
+
+  @Get('search')
+  search(@Query() searchDto: SearchCustomerDto) {
+    return this.customersService.searchCustomers(searchDto);
+  }
+
+  @Get('filter-options')
+  getFilterOptions() {
+    return this.customersService.getFilterOptions();
+  }
+
+  @Post('bulk-send-mail')
+  bulkSendMail(@Body() bulkActionDto: BulkActionDto) {
+    return this.customersService.bulkSendMail(bulkActionDto.customerIds);
   }
 
   @Get(':id')
