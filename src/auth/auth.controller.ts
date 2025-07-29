@@ -34,7 +34,7 @@ export class AuthController {
     // Gửi refresh token qua cookie thay vì body
     res.cookie('refresh_token', tokenData.refresh_token, {
       httpOnly: true,
-      secure: false, // Chỉ bật ở production
+      secure: true, // Chỉ bật ở production
       sameSite: 'none',
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
