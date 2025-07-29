@@ -33,11 +33,10 @@ export class AuthController {
 
     // Gửi refresh token qua cookie thay vì body
     res.cookie('refresh_token', tokenData.refresh_token, {
-      httpOnly: true, // Không cho JavaScript truy cập
-      secure: false, // Chỉ gửi qua HTTPS
-      sameSite: 'lax', // Không gửi nếu từ site khác
- 
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 ngày
+      httpOnly: true,
+      secure: false, // Chỉ bật ở production
+      sameSite: 'none',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
     return { access_token: tokenData.access_token };
