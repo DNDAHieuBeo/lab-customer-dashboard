@@ -4,6 +4,7 @@ import { Admin } from '../admin/entities/admin.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
+import { ChangePasswordDto } from './dto/change-password.dto';
 
 @Injectable()
 export class AuthService {
@@ -13,7 +14,6 @@ export class AuthService {
     private readonly adminRepo: Repository<Admin>,
   ) {}
 
-  // 🔐 Validate đăng nhập và sinh token
   async validate(
     email: string,
     password: string,
@@ -38,7 +38,7 @@ export class AuthService {
     return { access_token, refresh_token };
   }
 
-  // 🔁 Cấp lại access token từ refresh token
+
   async refreshToken(rawToken: string): Promise<string> {
     try {
       const payload = this.jwtService.verify(rawToken, {
@@ -62,7 +62,6 @@ export class AuthService {
     }
   }
 
-
   async invalidateToken(rawToken: string): Promise<void> {
     try {
       const payload = this.jwtService.verify(rawToken, {
@@ -85,11 +84,10 @@ export class AuthService {
       throw new UnauthorizedException('Không thể huỷ token');
     }
   }
-  // 📌 Lấy thông tin đầy đủ của admin từ DB
-  async getAdminProfile(userId: number): Promise<Partial<Admin>> {
+  async getAdminProfile(userId: string): Promise<Partial<Admin>> {
     const admin = await this.adminRepo.findOne({
       where: { id: userId },
-      select: ['id', 'firstName', 'lastName', 'email'], // 👈 chỉ lấy thông tin cần thiết
+      select: ['id', 'firstName', 'lastName', 'email'],
     });
 
     if (!admin) {
@@ -99,23 +97,37 @@ export class AuthService {
     return admin;
   }
   async updateAdminProfile(
-    adminId: number,
+    adminId: string,
     data: { firstName: string; lastName: string },
   ): Promise<Partial<Admin>> {
     const admin = await this.adminRepo.findOneBy({ id: adminId });
-  
+
     if (!admin) {
       throw new UnauthorizedException('Admin không tồn tại');
     }
-  
+
     admin.firstName = data.firstName;
     admin.lastName = data.lastName;
-  
+
     await this.adminRepo.save(admin);
-  
-    // Trả về bản rút gọn, không trả password, token...
+
     const { password, refreshToken, ...safeAdmin } = admin;
     return safeAdmin;
   }
-  
+
+  async changePassword(adminId: string, dto: ChangePasswordDto) {
+    const admin = await this.adminRepo.findOneBy({ id: adminId });
+
+    if (!admin) throw new Error('Admin not found');
+
+    const isMatch = await bcrypt.compare(dto.oldPassword, admin.password);
+    if (!isMatch) throw new Error('Old password is incorrect');
+
+    const hashedPassword = await bcrypt.hash(dto.newPassword, 10);
+    admin.password = hashedPassword;
+
+    await this.adminRepo.save(admin);
+
+    return { message: 'Password changed successfully' };
+  }
 }

@@ -16,6 +16,7 @@ import { Res } from '@nestjs/common';
 import { RefreshTokenGuard } from './guards/refresh-token.guard';
 import { RequestWithCookies } from 'src/types/request-with-cookie';
 import { UpdateProfileDto } from './dto/update-profile.dto';
+import { ChangePasswordDto } from './dto/change-password.dto';
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -62,6 +63,13 @@ export class AuthController {
     const refresh_token = (req as any).cookies['refresh_token']; // Tạm thời
     const access_token = await this.authService.refreshToken(refresh_token);
     return { access_token };
+  }
+  
+  @Post('change-password')
+  @UseGuards(JwtAuthGuard)
+  async changePassword(@Req() req, @Body() body: ChangePasswordDto) {
+    const adminId = req.user.sub;
+    return this.authService.changePassword(adminId, body);
   }
   // 📁 backend/src/auth/auth.controller.ts
   @Post('logout')

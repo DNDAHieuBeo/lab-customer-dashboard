@@ -4,7 +4,7 @@ import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 @Entity()
 export class Admin {
   @PrimaryGeneratedColumn() // 👈 ID tự động tăng
-  id: number;
+  id: string;
 
   @Column({ unique: true })
   email: string;
