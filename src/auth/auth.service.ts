@@ -62,7 +62,7 @@ export class AuthService {
     }
   }
 
-  // 🚫 Huỷ refresh token
+
   async invalidateToken(rawToken: string): Promise<void> {
     try {
       const payload = this.jwtService.verify(rawToken, {
@@ -98,4 +98,24 @@ export class AuthService {
 
     return admin;
   }
+  async updateAdminProfile(
+    adminId: number,
+    data: { firstName: string; lastName: string },
+  ): Promise<Partial<Admin>> {
+    const admin = await this.adminRepo.findOneBy({ id: adminId });
+  
+    if (!admin) {
+      throw new UnauthorizedException('Admin không tồn tại');
+    }
+  
+    admin.firstName = data.firstName;
+    admin.lastName = data.lastName;
+  
+    await this.adminRepo.save(admin);
+  
+    // Trả về bản rút gọn, không trả password, token...
+    const { password, refreshToken, ...safeAdmin } = admin;
+    return safeAdmin;
+  }
+  
 }

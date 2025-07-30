@@ -7,6 +7,7 @@ import {
   Request,
   UnauthorizedException,
   Req,
+  Put,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './jwt-auth.guard';
@@ -14,6 +15,7 @@ import { Response } from 'express';
 import { Res } from '@nestjs/common';
 import { RefreshTokenGuard } from './guards/refresh-token.guard';
 import { RequestWithCookies } from 'src/types/request-with-cookie';
+import { UpdateProfileDto } from './dto/update-profile.dto';
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -48,8 +50,12 @@ export class AuthController {
     const userId = req.user.sub; // 👈 ID từ JWT
     return this.authService.getAdminProfile(userId); // 👈 Trả về full admin info
   }
-  
-  
+  @Put('profile')
+  @UseGuards(JwtAuthGuard)
+  async updateProfile(@Request() req, @Body() body: UpdateProfileDto) {
+    const adminId = req.user.sub;
+    return this.authService.updateAdminProfile(adminId, body);
+  }
 
   @Post('refresh')
   async refresh(@Req() req: RequestWithCookies) {
