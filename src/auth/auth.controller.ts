@@ -42,13 +42,14 @@ export class AuthController {
     return { access_token: tokenData.access_token };
   }
 
-  // 👇 test route protected
-  @UseGuards(JwtAuthGuard)
   @Get('profile')
-  getProfile(@Request() req) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access
-    return req.user;
+  @UseGuards(JwtAuthGuard)
+  async getProfile(@Request() req) {
+    const userId = req.user.sub; // 👈 ID từ JWT
+    return this.authService.getAdminProfile(userId); // 👈 Trả về full admin info
   }
+  
+  
 
   @Post('refresh')
   async refresh(@Req() req: RequestWithCookies) {

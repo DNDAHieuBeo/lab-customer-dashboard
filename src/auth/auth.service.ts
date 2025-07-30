@@ -85,4 +85,17 @@ export class AuthService {
       throw new UnauthorizedException('Không thể huỷ token');
     }
   }
+  // 📌 Lấy thông tin đầy đủ của admin từ DB
+  async getAdminProfile(userId: number): Promise<Partial<Admin>> {
+    const admin = await this.adminRepo.findOne({
+      where: { id: userId },
+      select: ['id', 'firstName', 'lastName', 'email'], // 👈 chỉ lấy thông tin cần thiết
+    });
+
+    if (!admin) {
+      throw new UnauthorizedException('Không tìm thấy admin');
+    }
+
+    return admin;
+  }
 }
