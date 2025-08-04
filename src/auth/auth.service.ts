@@ -17,19 +17,20 @@ export class AuthService {
   async validate(
     email: string,
     password: string,
+    rememberMe: boolean,
   ): Promise<{ access_token: string; refresh_token: string } | null> {
     const admin = await this.adminRepo.findOneBy({ email });
     if (!admin || !(await bcrypt.compare(password, admin.password))) {
       return null;
     }
-
+    const refreshExpiresIn = rememberMe ? '30d' : '7d';
     const access_token = this.jwtService.sign(
       { sub: admin.id },
       { expiresIn: '15m' },
     );
     const refresh_token = this.jwtService.sign(
       { sub: admin.id },
-      { secret: 'REFRESH_SECRET', expiresIn: '7d' },
+      { secret: 'REFRESH_SECRET', expiresIn: refreshExpiresIn },
     );
 
     const hashedRefresh = await bcrypt.hash(refresh_token, 10);
@@ -37,7 +38,6 @@ export class AuthService {
 
     return { access_token, refresh_token };
   }
-
 
   async refreshToken(rawToken: string): Promise<string> {
     try {

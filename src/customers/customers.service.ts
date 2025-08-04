@@ -93,7 +93,7 @@ export class CustomersService {
     };
   }
 
-  /** 📧 Gửi mail hàng loạt */
+
   async bulkSendMail(customerIds: string[]): Promise<{ success: boolean; message: string }> {
     try {
       const customers = await this.customerRepository.find({
@@ -104,9 +104,6 @@ export class CustomersService {
       if (customers.length === 0) {
         return { success: false, message: 'Không tìm thấy customer nào' };
       }
-
-      // TODO: Implement actual email sending logic here
-      // Ví dụ: await this.emailService.sendBulkMail(customers);
       
       console.log(`Gửi mail đến ${customers.length} customers:`, 
         customers.map(c => c.email)

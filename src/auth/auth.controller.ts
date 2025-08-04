@@ -23,27 +23,35 @@ export class AuthController {
 
   @Post('login')
   async login(
-    @Body() body: { email: string; password: string },
+    @Body() body: { email: string; password: string; rememberMe: boolean },
     @Res({ passthrough: true }) res: Response,
   ) {
     const tokenData = await this.authService.validate(
       body.email,
       body.password,
+      body.rememberMe,
     );
+  
     if (!tokenData) {
       throw new UnauthorizedException('Invalid credentials');
     }
-
-    // Gửi refresh token qua cookie thay vì body
+  
+    const { rememberMe } = body; // ✅ Thêm dòng này để lấy rememberMe từ body
+  
+    const refreshMaxAgeMs = rememberMe
+      ? 30 * 24 * 60 * 60 * 1000
+      : 7 * 24 * 60 * 60 * 1000;
+  
     res.cookie('refresh_token', tokenData.refresh_token, {
       httpOnly: true,
-      secure: true, // Chỉ bật ở production
+      secure: true,
       sameSite: 'none',
-      maxAge: 7 * 24 * 60 * 60 * 1000,
+      maxAge: refreshMaxAgeMs,
     });
-
+  
     return { access_token: tokenData.access_token };
   }
+  
 
   @Get('profile')
   @UseGuards(JwtAuthGuard)
@@ -64,7 +72,7 @@ export class AuthController {
     const access_token = await this.authService.refreshToken(refresh_token);
     return { access_token };
   }
-  
+
   @Post('change-password')
   @UseGuards(JwtAuthGuard)
   async changePassword(@Req() req, @Body() body: ChangePasswordDto) {

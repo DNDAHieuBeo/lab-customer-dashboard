@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { CustomersModule } from './customers/customers.module';
 import { Admin } from './admin/entities/admin.entity';
 import { AuthModule } from './auth/auth.module';
+console.log(process.env.DATABASE_URL)
 @Module({
   imports: [
     TypeOrmModule.forRoot({
